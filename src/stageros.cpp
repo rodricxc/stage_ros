@@ -272,6 +272,8 @@ StageNode::StageNode(int argc, char** argv, bool gui, const char* fname, bool us
     this->sim_time.fromSec(0.0);
     this->base_last_cmd.fromSec(0.0);
     double t;
+    this->n_.setParam("/crash", false);
+
     ros::NodeHandle localn("~");
     if(!localn.getParam("base_watchdog_timeout", t))
         t = 0.2;
@@ -506,6 +508,7 @@ StageNode::WorldCallback()
         //@todo Publish stall on a separate topic when one becomes available
         //this->odomMsgs[r].stall = this->positionmodels[r]->Stall();
         //
+        this->n_.setParam("/crash", (bool)this->positionmodels[r]->Stalled());
         odom_msg.header.frame_id = mapName("odom", r, static_cast<Stg::Model*>(robotmodel->positionmodel));
         odom_msg.header.stamp = sim_time;
 
